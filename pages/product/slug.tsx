@@ -2,6 +2,8 @@ import { Box, Button, Chip, Grid, Typography } from '@mui/material';
 import React from 'react'
 import { ShopLayout } from '../../components/layouts'
 import { initialData } from '../../database/products';
+import { ProductSlideshow } from '../../components/products';
+import 'react-slideshow-image/dist/styles.css'
 
 const product = initialData.products[0];
 
@@ -11,7 +13,8 @@ const ProductPage = () => {
 
       <Grid container spacing={3}>
         <Grid item xs={12} sm={7}>
-          {/* Slideshow TODO*/}
+          
+          <ProductSlideshow  images={product.images}/>
         </Grid>
         <Grid item xs={12} sm={5}>
           <Box display={'flex'} flexDirection={'column'}>
