@@ -5,6 +5,7 @@ import { initialData } from '../../database/products';
 import { ProductSlideshow } from '../../components/products';
 import 'react-slideshow-image/dist/styles.css'
 import { ItemCounter } from '../../components/ui';
+import { SizeSelector } from '../../components/products';
 
 const product = initialData.products[0];
 
@@ -26,6 +27,11 @@ const ProductPage = () => {
             <Box sx={{my: 2}}>
               <Typography variant='subtitle2'>Quantity</Typography>
               <ItemCounter/>
+              <SizeSelector 
+                // selectedSize={product.sizes[0]} 
+                sizes={ product.sizes}
+              />
+              
             </Box>
 
             {/* ADD Cart */}
