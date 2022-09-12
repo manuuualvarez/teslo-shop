@@ -1,7 +1,7 @@
 import { Box, Divider, Drawer, IconButton, Input, InputAdornment, List, ListItem, ListItemIcon, ListItemText, ListSubheader } from "@mui/material"
 import { AccountCircleOutlined, AdminPanelSettings, CategoryOutlined, ConfirmationNumberOutlined, EscalatorWarningOutlined, FemaleOutlined, LoginOutlined, MaleOutlined, SearchOutlined, VpnKeyOutlined } from "@mui/icons-material"
 import { UiContext } from "../../context"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { useRouter } from "next/router"
 
 
@@ -9,6 +9,13 @@ export const SideMenu = () => {
     const { isMenuOpen, toggleSideMenu  } = useContext(UiContext);
 
     const router = useRouter()
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const onSearchTerm = () => {
+        if(searchTerm.trim().length === 0) return;
+        navigateTo(`/search/${ searchTerm }`)
+        setSearchTerm('');
+    }
 
     const navigateTo = (url: string) => {
         toggleSideMenu();
@@ -28,12 +35,16 @@ export const SideMenu = () => {
 
                 <ListItem>
                     <Input
+                        value={ searchTerm }
+                        onChange= { (e) => setSearchTerm(e.target.value) }
+                        onKeyPress={ (e) => e.key === 'Enter' ? onSearchTerm() : null }
                         type='text'
                         placeholder="Buscar..."
                         endAdornment={
                             <InputAdornment position="end">
                                 <IconButton
-                                aria-label="toggle password visibility"
+                                    onClick={ onSearchTerm }
+                                    aria-label="toggle password visibility"
                                 >
                                  <SearchOutlined />
                                 </IconButton>
