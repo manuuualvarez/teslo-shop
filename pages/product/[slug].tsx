@@ -1,5 +1,5 @@
 import { Box, Button, Chip, Grid, Typography } from '@mui/material';
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ShopLayout } from '../../components/layouts'
 import { ProductSlideshow } from '../../components/products';
 import 'react-slideshow-image/dist/styles.css'
@@ -8,6 +8,8 @@ import { SizeSelector } from '../../components/products';
 import { IProduct, ICartProduct, ISize } from '../../interfaces';
 import { NextPage, GetStaticPaths, GetStaticProps } from 'next';
 import { dbProduct } from '../../database';
+import { useRouter } from 'next/router';
+import { CartContext } from '../../context/cart/CartContext';
 
 
 
@@ -16,6 +18,10 @@ interface Props {
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
+
+  const router = useRouter();
+
+  const { addProductToCart } = useContext(CartContext)
 
   const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
     _id: product._id, 
@@ -35,15 +41,18 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     }))
   }
 
-  const onAddProduct = () => {
-    console.log({ tempCartProduct });
-  }
-
   const onUpdateQuantity = (quantity: number) => {
     setTempCartProduct( currentProduct => ({
       ...currentProduct,
       quantity
     }))
+  }
+
+  const onAddProduct = () => {
+    
+    if (!tempCartProduct.size) return;
+    addProductToCart(tempCartProduct);
+    // router.push('/cart');
   }
 
   return (
