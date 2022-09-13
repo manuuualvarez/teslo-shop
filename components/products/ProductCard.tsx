@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState } from 'react'
-import { Card, Grid, CardActionArea, CardMedia, Box, Typography, Link } from '@mui/material';
+import { Card, Grid, CardActionArea, CardMedia, Box, Typography, Link, Chip } from '@mui/material';
 import { IProduct } from '../../interfaces';
 import NextLink from 'next/link';
 
@@ -27,27 +27,37 @@ export const ProductCard: FC<Props> = ({ product }) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
     >
-        <Card>
-            <CardActionArea>
-                <NextLink href={`/product/${ product.slug }`} passHref prefetch={false}>
-                    <Link>
+        <Card>  
+            <NextLink href={`/product/${ product.slug }`} passHref prefetch={false}>
+                <Link>
+                    <CardActionArea>
+                        {/* Out of stock */}
+                        {
+                            (product.inStock <= 0) && (
+                                <Chip
+                                    color='primary'
+                                    label='Out of stock'
+                                    sx={{position: 'absolute', zIndex: 99, top: '10px', left: '10px'}}
+                                />
+                            )
+                        }
+                        {/* Image */}
                         <CardMedia
                             component='img'
                             className='fadeIn'
                             image={productImage}
                             alt={product.title}
                             onLoad={ () => setIsImageLoaded(true) }
-                        >
-
-                        </CardMedia>
-                    </Link>
-                </NextLink>
-            </CardActionArea>
-
+                        />
+                    </CardActionArea>
+                </Link>
+            </NextLink>
+            {/* Description */}
             <Box sx={{mt: 1, display: isImageLoaded ? 'block' : 'none'}} className='fadeIn'>
                 <Typography fontWeight={700}>{ product.title }</Typography>
                 <Typography fontWeight={500}> ${ product.price }</Typography>
             </Box>
+
         </Card>
     </Grid>
   )
