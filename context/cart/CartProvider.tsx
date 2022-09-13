@@ -1,19 +1,32 @@
-import { FC, PropsWithChildren, useReducer } from 'react';
+import { FC, PropsWithChildren, useEffect, useReducer } from 'react';
 import { ICartProduct } from '../../interfaces';
 import { CartContext, cartReducer } from './';
+import Cookie from 'js-cookie'
 
 export interface CartState {
      cart: ICartProduct[];
 }
 
-const CART_INITIAL_STATE: CartState = {
-     cart: []
+const getCookies = () => {
+  try {
+    return Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : []
+  } catch (error) {
+    return []
+  }
 }
 
+const CART_INITIAL_STATE: CartState = {
+     cart: getCookies()     
+}
 
 export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
+
+  useEffect(() => {
+    Cookie.set('cart', JSON.stringify(state.cart));
+  }, [state.cart]);
+  
 
   const addProductToCart = (product: ICartProduct) => {
     //? Option 1: Failed
