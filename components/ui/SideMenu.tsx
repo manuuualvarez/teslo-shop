@@ -22,6 +22,15 @@ export const SideMenu = () => {
         router.push(url);
     }
 
+
+    const inputRef = (input: any) => {
+        if (input) {
+            setTimeout(() => {
+                {input.focus()}
+            }, 100);
+        }
+    }
+
   return (
     <Drawer
         open={ isMenuOpen }
@@ -35,11 +44,13 @@ export const SideMenu = () => {
 
                 <ListItem>
                     <Input
+                        inputRef={ inputRef }
+                        autoFocus={ true }
                         value={ searchTerm }
                         onChange= { (e) => setSearchTerm(e.target.value) }
                         onKeyPress={ (e) => e.key === 'Enter' ? onSearchTerm() : null }
                         type='text'
-                        placeholder="Buscar..."
+                        placeholder="Search..."
                         endAdornment={
                             <InputAdornment position="end">
                                 <IconButton

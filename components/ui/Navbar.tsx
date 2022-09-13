@@ -1,15 +1,23 @@
-import { AppBar, Badge, Box, Button, IconButton, Link, Toolbar, Typography } from '@mui/material'
-import React, { useContext } from 'react'
+import { AppBar, Badge, Box, Button, IconButton, Input, InputAdornment, Link, Toolbar, Typography } from '@mui/material'
+import React, { useContext, useState } from 'react'
 import NextLink from 'next/link'
-import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material'
+import { ClearOutlined, SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material'
 import { useRouter } from 'next/router'
 import { UiContext } from '../../context'
 
 export const Navbar = () => {
 
-   const { toggleSideMenu  } = useContext(UiContext)
+    const { asPath, push} = useRouter();
+    const { toggleSideMenu  } = useContext(UiContext)
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
 
-    const router = useRouter();
+    const onSearchTerm = () => {
+        if(searchTerm.trim().length === 0) return;    
+        push(`/search/${ searchTerm }`);
+        setSearchTerm('');
+    }
+
 
   return (
     <AppBar>
@@ -23,30 +31,71 @@ export const Navbar = () => {
 
             <Box flex={1}/>
 
-            <Box sx={{ display: { xs: 'none', sm: 'block'}}}>
+            <Box sx={{ display: isSearchVisible ? 'none' : { xs: 'none', sm: 'block'}}} className="fadeIn">
                 <NextLink href='/category/men' passHref>
                     <Link>
-                        <Button color={ router.asPath === '/category/men' ? 'primary' : 'info' }>Men</Button>
+                        <Button color={ asPath === '/category/men' ? 'primary' : 'info' }>Men</Button>
                     </Link>
                 </NextLink>
 
                 <NextLink href='/category/women' passHref>
                     <Link>
-                        <Button color={ router.asPath === '/category/women' ? 'primary' : 'info' }>Women</Button>
+                        <Button color={ asPath === '/category/women' ? 'primary' : 'info' }>Women</Button>
                     </Link>
                 </NextLink>
 
                 <NextLink href='/category/kids' passHref>
                     <Link>
-                        <Button color={ router.asPath === '/category/kids' ? 'primary' : 'info' } >Kids</Button>
+                        <Button color={ asPath === '/category/kids' ? 'primary' : 'info' } >Kids</Button>
                     </Link>
                 </NextLink>
             </Box>
 
             <Box flex={1}/>
 
-            <IconButton>
-                <SearchOutlined></SearchOutlined>
+            {/* Big screens */}
+            {
+                isSearchVisible
+                ? (
+                    <Input
+                        sx={{ display: { xs: 'none', sm: 'flex'}}}
+                        className='fadeIn'
+                        autoFocus={ true }
+                        value={ searchTerm }
+                        onChange= { (e) => setSearchTerm(e.target.value) }
+                        onKeyPress={ (e) => e.key === 'Enter' ? onSearchTerm() : null }
+                        type='text'
+                        placeholder="Search..."
+                        endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                                onClick={ () => setIsSearchVisible(false) }
+                                aria-label="toggle password visibility"
+                            >
+                                <ClearOutlined/>
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                    />
+                )
+                : (
+                    <IconButton
+                        sx={{display: {xs: 'none', sm: 'flex'}}}
+                        className='fadeIn'
+                        onClick={() => setIsSearchVisible(true)}
+                    >
+                        <SearchOutlined/>
+                    </IconButton>
+                )
+            }
+
+            
+            {/* Small screens */}
+            <IconButton
+                sx={{display: {xs: 'flex', sm: 'none'}}}
+                onClick={ toggleSideMenu }
+            >
+                <SearchOutlined/>
             </IconButton>
 
             <NextLink href='/cart' passHref>
