@@ -6,6 +6,7 @@ type CartActionType =
 | { type: '[Cart] - Load Cart from Cookies | storage', payload: ICartProduct[] }
 | { type: '[Cart] - Update', payload: ICartProduct[] }
 | { type: '[Cart] - Change Product Quantity', payload: ICartProduct }
+| { type: '[Cart] - Remove Product', payload: ICartProduct }
 
 export const cartReducer = ( state: CartState, action: CartActionType): CartState => {
      switch (action.type) {
@@ -27,6 +28,11 @@ export const cartReducer = ( state: CartState, action: CartActionType): CartStat
                     if( product.size !== action.payload.size) return product;
                     return action.payload;
                 })
+            }
+        case '[Cart] - Remove Product':
+            return {
+                ...state,
+                cart: state.cart.filter( product  => !(product._id === action.payload._id && product.size === action.payload.size))
             }
        default:
            return state;
