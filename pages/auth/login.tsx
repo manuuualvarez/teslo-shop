@@ -1,11 +1,14 @@
-import { Button, Grid, Link, TextField, Typography } from '@mui/material'
+import { Button, Chip, Grid, Link, TextField, Typography } from '@mui/material'
 import { Box } from '@mui/system'
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import { AuthLayout } from '../../components/layouts'
 import NextLink from 'next/link';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { validations } from '../../utils';
 import testloApi from '../../api/tesloApi';
+import { ErrorOutline } from '@mui/icons-material';
+import { AuthContext } from '../../context';
+import { useRouter } from 'next/router';
 
 
 type FormData = {
@@ -15,17 +18,26 @@ type FormData = {
 
 const LoginPage = () => {
 
+  const { logginUser } = useContext(AuthContext);
+  const router = useRouter()
+
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
+  const [showError, setShowError] = useState(false);
 
   const onLoginUser = async ({email, password}: FormData) => {
-    try {
-      const { data } = await testloApi.post('/users/login', { email, password });
-      const { token, user } = data;
-      console.log({token, user})
-    } catch (error) {
-      console.log("error in credentials")
+    setShowError(false)
+    const isValidLogin = await logginUser(email, password);
+
+    if (!isValidLogin) {
+      setShowError(true)
+      setTimeout(() => {
+        setShowError(false)
+      }, 4000);
+      return;
     }
-  }
+
+    router.replace('/');
+  };
 
   return (
     <AuthLayout title={'Login'} pageDescription={'Please Sign In'} >
@@ -35,6 +47,16 @@ const LoginPage = () => {
                 {/* Title */}
                 <Grid item xs={12}>
                   <Typography variant='h1' component={'h1'}>Sign In</Typography>
+                  { showError && (
+                    <Chip 
+                      label="Please check your email and password"
+                      color='error'
+                      icon={<ErrorOutline/>}
+                      className="fadeIn"
+                      sx={{mt: 1, mb: 1}}
+                    />
+                    )
+                  }
                 </Grid>
                 {/* Email */}
                 <Grid item xs={12}>
