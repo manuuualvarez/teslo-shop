@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { FC, PropsWithChildren, useReducer } from 'react';
+import { FC, PropsWithChildren, useEffect, useReducer } from 'react';
 import { testloApi } from '../../api';
 import { IUser } from '../../interfaces';
 import { AuthContext, authReducer } from './';
@@ -17,6 +17,23 @@ const AUTH_INITIAL_STATE: AuthState = {
 
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
+
+  useEffect(() => {
+    checkToken();
+  }, []);
+
+  const checkToken = async () => {
+    try {
+      const { data } = await testloApi.get('/users/validate-token');
+      const { token, user } = data;
+      Cookies.set('token', token)
+      dispatch({ type: '[Auth] - Login', payload: user});
+    } catch (error) {
+      Cookies.remove('token');
+    }
+
+  }
+  
 
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE)
 
