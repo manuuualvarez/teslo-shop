@@ -4,6 +4,8 @@ import React from 'react'
 import { AuthLayout } from '../../components/layouts'
 import NextLink from 'next/link';
 import { useForm, SubmitHandler } from "react-hook-form";
+import { validations } from '../../utils';
+import testloApi from '../../api/tesloApi';
 
 
 type FormData = {
@@ -15,13 +17,19 @@ const LoginPage = () => {
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
 
-  const onLoginUser = (data: FormData) => {
-    console.log({data});
+  const onLoginUser = async ({email, password}: FormData) => {
+    try {
+      const { data } = await testloApi.post('/users/login', { email, password });
+      const { token, user } = data;
+      console.log({token, user})
+    } catch (error) {
+      console.log("error in credentials")
+    }
   }
 
   return (
     <AuthLayout title={'Login'} pageDescription={'Please Sign In'} >
-      <form onSubmit={handleSubmit(onLoginUser)}>
+      <form onSubmit={handleSubmit(onLoginUser)} noValidate>
         <Box sx={{width: 350, padding:'10px 20px'}}>
             <Grid container spacing={2}>
                 {/* Title */}
@@ -35,7 +43,15 @@ const LoginPage = () => {
                     type='email' 
                     variant='filled' 
                     fullWidth
-                    {...register('email')}
+                    {
+                      ...register('email', {
+                        required: 'Email is required',
+                        validate: validations.isEmail
+                      })
+                    }
+                    error = { !!errors.email }
+                    helperText={ errors.email?.message}
+
                   />
                 </Grid>
                 {/* Password */}
@@ -45,7 +61,14 @@ const LoginPage = () => {
                     type='password' 
                     variant='filled' 
                     fullWidth
-                    {...register('password')}
+                    {
+                      ...register('password', {
+                        required: 'Password is required',
+                        minLength: { value: 6, message: '6 characters min.'}
+                      })
+                    }
+                    error = { !!errors.password }
+                    helperText={ errors.password?.message}
                   />
                 </Grid>
                   {/* Call to Action */}

@@ -12,5 +12,5 @@ export const isValidEmail = (email: string): boolean => {
   export const isEmail = (email: string): string | undefined => {
     return isValidEmail(email) 
       ? undefined
-      : 'El correo no parece ser válido';
+      : 'The email does not seem to be valid'
   }
