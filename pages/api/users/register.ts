@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { db } from '../../../database';
 import { User } from '../../../models';
 import bcrypt from 'bcryptjs';
-import { jwt } from '../../../utils';
+import { jwt, validations } from '../../../utils';
 
 
 type Data = 
@@ -38,7 +38,13 @@ const registerUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
             message: 'The name should contain more than 2 characters'
         });
     }
-    
+
+    if (!validations.isValidEmail(email)) {
+        return res.status(400).json({
+            message: 'The email is not valid'
+        });
+    }
+
     await db.connect();
     const user = await User.findOne({ email });
 
