@@ -17,34 +17,40 @@ type Data =
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
 
     switch (req.method) {
-        case 'POST':
-            return loginUser(req, res);
+        case 'GET':
+            return validateToken(req, res);
         default:
             return res.status(400).json({ message: 'Bad Request' })
     }   
 }
 
-const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-    const { email = '', password = '' } = req.body;
+const validateToken = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    const { token = '' } = req.cookies;
+
+    let userId = '';
+
+    try {
+        userId = await jwt.isValidToken(token);
+    } catch (error) {
+        return res.status(401).json({
+            message: 'Token is invalid'
+        })
+    }
 
     await db.connect();
-    const user = await User.findOne({email}).lean()
+
+    const user = await User.findById(userId).lean();
+
     await db.disconnect();
-    
+
     if (!user) {
-        return res.status(400).json({ message: 'Email or password incorrect - EMAIL' })
+        return res.status(400).json({ message: 'User does not exist' })
     }
 
-    if (!bcryptjs.compareSync(password, user.password!)){
-        return res.status(400).json({ message: 'Email or password incorrect - PASSWORD' })
-    }
+    const {_id, email, name, role } = user;
 
-    const { role, name, _id } = user;
-
-    const token = jwt.signToken(_id, email);
-    
     return res.status(200).json({ 
-        token,
+        token: jwt.signToken(_id, email),
         user: {
             email,
             role,
@@ -52,3 +58,5 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         }
     })
 }
+
+
