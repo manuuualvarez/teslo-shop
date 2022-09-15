@@ -1,6 +1,6 @@
 import { Button, Grid, Link, TextField, Typography, Chip } from '@mui/material';
 import { Box } from '@mui/system'
-import React from 'react'
+import React, { useContext } from 'react'
 import { AuthLayout } from '../../components/layouts'
 import NextLink from 'next/link';
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -8,6 +8,8 @@ import { validations } from '../../utils';
 import testloApi from '../../api/tesloApi';
 import { ErrorOutline } from '@mui/icons-material';
 import {useState} from 'react';
+import { AuthContext } from '../../context';
+import { useRouter } from 'next/router';
 
 
 type FormData = {
@@ -17,22 +19,26 @@ type FormData = {
 };
 
 const RegisterPage = () => {
+  const router = useRouter()
+  const { registerUser } = useContext(AuthContext)
   const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormData>();
   const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const onRegisterUser = async ({email, password, name}: FormData) => {
+    setShowError(false);
 
-    try {
-      const { data } = await testloApi.post('/users/register', { email, password, name });
-      const { token, user } = data;
-      setShowError(false)
-    } catch (error) {
-      console.log("error in credentials")
+    const { hasError, message } = await registerUser(name, email, password);
+
+    if (hasError) {
       setShowError(true)
       setTimeout(() => {
         setShowError(false)
       }, 3000);
+      setErrorMessage(message!);
+      return;
     }
+    router.replace('/');
   }
 
   return (

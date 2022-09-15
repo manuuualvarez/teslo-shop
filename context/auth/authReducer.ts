@@ -6,7 +6,6 @@ import { AuthState } from './';
 type AuthActionType = 
 | { type: '[Auth] - Login', payload: IUser }
 | { type: '[Auth] - Logout' }
-| { type: '[Auth] - Register' }
 
 export const authReducer = ( state: AuthState, action: AuthActionType): AuthState => {
      switch (action.type) {
