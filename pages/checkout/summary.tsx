@@ -48,7 +48,6 @@ const SummaryPage = () => {
 
                             <OrderSummary/>
                             
-    
                             {/* Checkout */}
                             <Box sx={{mt: 3}}>
                                 <Button
