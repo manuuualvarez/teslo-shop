@@ -7,7 +7,7 @@ import { useRouter } from "next/router"
 
 export const SideMenu = () => {
     const { isMenuOpen, toggleSideMenu  } = useContext(UiContext);
-    const { isLoggedIn, user }  = useContext(AuthContext);
+    const { isLoggedIn, user, logOutUser }  = useContext(AuthContext);
 
     const router = useRouter()
     const [searchTerm, setSearchTerm] = useState('');
@@ -23,7 +23,6 @@ export const SideMenu = () => {
         router.push(url);
     }
 
-
     const inputRef = (input: any) => {
         if (input) {
             setTimeout(() => {
@@ -31,6 +30,7 @@ export const SideMenu = () => {
             }, 100);
         }
     }
+
 
   return (
     <Drawer
@@ -128,7 +128,7 @@ export const SideMenu = () => {
                         </ListItem>
                     )
                     : (
-                        <ListItem button>
+                        <ListItem button onClick={logOutUser}>
                             <ListItemIcon>
                                 <LoginOutlined/>
                             </ListItemIcon>
