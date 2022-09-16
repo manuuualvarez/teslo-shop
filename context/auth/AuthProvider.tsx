@@ -18,11 +18,16 @@ const AUTH_INITIAL_STATE: AuthState = {
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
+  const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE)
+
   useEffect(() => {
     checkToken();
   }, []);
 
   const checkToken = async () => {
+    if(!Cookies.get('token')) {
+      return;
+    }
     try {
       const { data } = await testloApi.get('/users/validate-token');
       const { token, user } = data;
@@ -31,12 +36,8 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     } catch (error) {
       Cookies.remove('token');
     }
-
   }
   
-
-  const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE)
-
   const logginUser = async (email: string, password: string) : Promise<boolean> => {
     try {
       const { data } = await testloApi.post('/users/login', {email, password});
