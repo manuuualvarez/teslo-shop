@@ -20,6 +20,8 @@ type FormData = {
 
 const RegisterPage = () => {
   const router = useRouter()
+  console.log({router});
+
   const { registerUser } = useContext(AuthContext)
   const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormData>();
   const [showError, setShowError] = useState(false);
@@ -38,7 +40,8 @@ const RegisterPage = () => {
       setErrorMessage(message!);
       return;
     }
-    router.replace('/');
+    const destination = router.query.p?.toString() || '/'
+    router.replace(destination);
   }
 
   return (
@@ -109,7 +112,10 @@ const RegisterPage = () => {
                 </Grid>
 
                 <Grid item xs={12} display='flex' justifyContent={'center'}>
-                    <NextLink href={'/auth/login'} passHref>
+                    <NextLink 
+                      href={ router.query.p ? `/auth/login?p=${router.query.p}` : '/auth/login'} 
+                      passHref
+                    >
                       <Link underline='always'>
                         Allready have an account? Go to login
                       </Link>
@@ -117,15 +123,15 @@ const RegisterPage = () => {
                 </Grid>
             </Grid>
             { showError && (
-                    <Chip 
-                      label="Please check your email and password"
-                      color='error'
-                      icon={<ErrorOutline/>}
-                      className="fadeIn"
-                      sx={{mt: 1, mb: 1}}
-                    />
-                    )
-                  }
+                <Chip 
+                  label="Please check your email and password"
+                  color='error'
+                  icon={<ErrorOutline/>}
+                  className="fadeIn"
+                  sx={{mt: 1, mb: 1}}
+                />
+              )
+            }
         </Box>
       </form>
     </AuthLayout>
