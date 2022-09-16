@@ -20,8 +20,6 @@ type FormData = {
 
 const RegisterPage = () => {
   const router = useRouter()
-  console.log({router});
-
   const { registerUser } = useContext(AuthContext)
   const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormData>();
   const [showError, setShowError] = useState(false);
@@ -124,7 +122,7 @@ const RegisterPage = () => {
             </Grid>
             { showError && (
                 <Chip 
-                  label="Please check your email and password"
+                  label={errorMessage}
                   color='error'
                   icon={<ErrorOutline/>}
                   className="fadeIn"

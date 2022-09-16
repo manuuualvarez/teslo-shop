@@ -22,6 +22,7 @@ export const cartReducer = ( state: CartState, action: CartActionType): CartStat
        case '[Cart] - Load Cart from Cookies | storage':
            return { 
             ...state,
+            isLoaded: true,
             cart: action.payload
             };
         case '[Cart] - Update':
@@ -46,6 +47,7 @@ export const cartReducer = ( state: CartState, action: CartActionType): CartStat
         case '[Cart] - Update cart summary':
             return {
                 ...state,
+                isLoaded: true,
                 numberOfItems: action.payload.numberOfItems,
                 subTotal: action.payload.subTotal,
                 tax: action.payload.tax,
