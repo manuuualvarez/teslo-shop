@@ -5,7 +5,7 @@ import { FC, PropsWithChildren, useEffect, useReducer } from 'react';
 import { testloApi } from '../../api';
 import { IUser } from '../../interfaces';
 import { AuthContext, authReducer } from './';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 export interface AuthState {
      isLoggedIn: boolean;
@@ -31,7 +31,8 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if(status === 'authenticated') {
-      // dispatch({type: '[Auth] - Login', payload: data?.user as IUser})
+      console.log({user: data?.user})
+      dispatch({type: '[Auth] - Login', payload: data?.user as IUser})
     }
 
   }, [status, data])
@@ -89,9 +90,8 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const logOutUser  = () => {
-    Cookies.remove('token');
     Cookies.remove('cart');
-
+    
     Cookies.remove('firstName');
     Cookies.remove('lastName');
     Cookies.remove('address');
@@ -100,7 +100,11 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     Cookies.remove('city');
     Cookies.remove('country');
     Cookies.remove('phone');
-    router.reload();
+    signOut();
+
+
+    // Cookies.remove('token');
+    // router.reload();
   }
 
   return (
