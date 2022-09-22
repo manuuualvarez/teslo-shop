@@ -1,2 +1,3 @@
 
-export { default as testloApi } from "./tesloApi";
+
+export { default as tesloApi } from './tesloApi';

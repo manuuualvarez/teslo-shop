@@ -1,66 +1,92 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import GithubProvider from "next-auth/providers/github"
-import { dbUsers } from "../../../database"
+import NextAuth from 'next-auth';
+import GithubProvider from 'next-auth/providers/github';
+import Credentials from 'next-auth/providers/credentials';
 
+import { dbUsers } from '../../../database';
 
-export const authOptions: NextAuthOptions = {
+export default NextAuth({
   // Configure one or more authentication providers
   providers: [
+    
+    // ...add more providers here
+
     Credentials({
-      name: 'Custom login',
+      name: 'Custom Login',
       credentials: {
-        email: { label: 'Email', type: 'email', placeholder: 'example@gmail.com' },
-        password: { label: 'Password', type: 'password', placeholder: 'Password' },
+        email: { label: 'Correo:', type: 'email', placeholder: 'correo@google.com'  },
+        password: { label: 'Contraseña:', type: 'password', placeholder: 'Contraseña'  },
       },
       async authorize(credentials) {
-        // Auth failed
-        return await dbUsers.checkUserEmailPassword(credentials!.email, credentials!.password)
+        console.log({credentials})
+        // return { name: 'Juan', correo: 'juan@google.com', role: 'admin' };
+
+        return await dbUsers.checkUserEmailPassword( credentials!.email, credentials!.password );
+
       }
     }),
+
 
     GithubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
     }),
-    // ...add more providers here
+
+
   ],
-  // Custom pages:
+
+  // Custom Pages
   pages: {
     signIn: '/auth/login',
-    signOut: '/auth/register',
-  },
-  // Duration
-  session: {
-    maxAge: 2592000, //30d
-    strategy: 'jwt',
-    updateAge: 86400, //day by day refresh
+    newUser: '/auth/register'
   },
 
-  // Callbacks:
+  // Callbacks
+  jwt: {
+    // secret: process.env.JWT_SECRET_SEED, // deprecated
+  },
+  
+  session: {
+    maxAge: 2592000, /// 30d
+    strategy: 'jwt',
+    updateAge: 86400, // cada día
+  },
+
+
   callbacks: {
-    async jwt({ token, account, user }){
-      if (account) {
-        token.accesToken = account.access_token;
-        switch (account.type) {
-          case 'oauth':
-            token.user = await dbUsers.oAuthToDbUser(user?.email || '', user?.name || '');
-            break;
+
+    async jwt({ token, account, user }) {
+      // console.log({ token, account, user });
+
+      if ( account ) {
+        token.accessToken = account.access_token;
+
+        switch( account.type ) {
+
+          case 'oauth': 
+            token.user = await dbUsers.oAUthToDbUser( user?.email || '', user?.name || '' );
+          break;
+
           case 'credentials':
             token.user = user;
-            break;
-          default:
-            break;
+          break;
         }
-      }
-      return token
-    },
-    async session({ session, token, user }){
-      session.accesToken = token.access_token;
-      session.user = token.user as any;
-      return session
-    }
-  }
-}
 
-export default NextAuth(authOptions)
+      }
+
+      return token;
+    },
+
+
+    async session({ session, token, user }){
+      // console.log({ session, token, user });
+
+      session.accessToken = token.accessToken;
+      session.user = token.user as any;
+
+      return session;
+    }
+    
+
+  }
+
+});

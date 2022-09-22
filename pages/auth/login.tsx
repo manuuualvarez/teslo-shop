@@ -1,167 +1,189 @@
-import { Button, Chip, Divider, Grid, Link, TextField, Typography } from '@mui/material'
-import { Box } from '@mui/system'
-import React, { useState, useEffect } from 'react'
-import { AuthLayout } from '../../components/layouts'
-import NextLink from 'next/link';
-import { useForm } from "react-hook-form";
-import { validations } from '../../utils';
-import { ErrorOutline } from '@mui/icons-material';
-import { useRouter } from 'next/router';
-import { getSession, signIn, getProviders } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next'
+import NextLink from 'next/link';
+import { signIn, getSession, getProviders } from 'next-auth/react';
+
+import { Box, Button, Chip, Divider, Grid, Link, TextField, Typography } from '@mui/material';
+import { ErrorOutline } from '@mui/icons-material';
+import { useForm } from 'react-hook-form';
+
+import { AuthLayout } from '../../components/layouts'
+import { validations } from '../../utils';
+import { useRouter } from 'next/router';
 
 
 type FormData = {
-  email: string,
-  password: string
+    email   : string,
+    password: string,
 };
 
+
 const LoginPage = () => {
-  const router = useRouter()
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
-  const [showError, setShowError] = useState(false);
+    const router = useRouter();
+    // const { loginUser } = useContext( AuthContext );
 
-  const [providers, setProviders] = useState<any>({});
+    const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+    const [ showError, setShowError ] = useState(false);
+    
+    const [providers, setProviders] = useState<any>({});
 
-  useEffect(() => {
-    getProviders().then(prov => {
-      console.log(prov)
-      setProviders(prov);
-    })
-  }, [])
-  
-
-  const onLoginUser = async ({email, password}: FormData) => {
-    setShowError(false)
-    await signIn('credentials', { email, password })
-  };
-
-  return (
-    <AuthLayout title={'Login'} pageDescription={'Please Sign In'} >
-      <form onSubmit={handleSubmit(onLoginUser)} noValidate>
-        <Box sx={{width: 350, padding:'10px 20px'}}>
-            <Grid container spacing={2}>
-                {/* Title */}
-                <Grid item xs={12}>
-                  <Typography variant='h1' component={'h1'}>Sign In</Typography>
-                  { showError && (
-                    <Chip 
-                      label="Please check your email and password"
-                      color='error'
-                      icon={<ErrorOutline/>}
-                      className="fadeIn"
-                      sx={{mt: 1, mb: 1}}
-                    />
-                    )
-                  }
-                </Grid>
-                {/* Email */}
-                <Grid item xs={12}>
-                  <TextField 
-                    label="Email" 
-                    type='email' 
-                    variant='filled' 
-                    fullWidth
-                    {
-                      ...register('email', {
-                        required: 'Email is required',
-                        validate: validations.isEmail
-                      })
-                    }
-                    error = { !!errors.email }
-                    helperText={ errors.email?.message}
-
-                  />
-                </Grid>
-                {/* Password */}
-                <Grid item xs={12}>
-                  <TextField 
-                    label="Password" 
-                    type='password' 
-                    variant='filled' 
-                    fullWidth
-                    {
-                      ...register('password', {
-                        required: 'Password is required',
-                        minLength: { value: 6, message: '6 characters min.'}
-                      })
-                    }
-                    error = { !!errors.password }
-                    helperText={ errors.password?.message}
-                  />
-                </Grid>
-                  {/* Call to Action */}
-                <Grid item xs={12}>
-                  <Button type='submit' color='secondary' className='circular-btn' fullWidth>
-                    Login
-                  </Button>
-                </Grid>
-                {/* Go to Register */}
-                <Grid item xs={12} display='flex' justifyContent={'center'}>
-                    <NextLink 
-                      href={ router.query.p ? `/auth/register?p=${router.query.p}` : '/auth/register'} 
-                      passHref
-                    >
-                      <Link underline='always'>
-                        Go to Sing Up
-                      </Link>
-                    </NextLink>
-                </Grid>
-
-                <Grid item xs={12} display='flex' flexDirection='column' justifyContent={'center'}>
-                  <Divider sx={{width: '100%', mb: 2}}/>
-                  {
-                    Object.values(providers).map( (provider: any) => {
-
-                      if(provider.id === 'credentials') return (<div key='credentials'></div>)
-                      return (
-                        <Button 
-                          key={provider.name}
-                          variant='outlined'
-                          fullWidth
-                          color='primary'
-                          sx={{mb: 1}}
-                          onClick={() => signIn(provider.id) }
-                        >
-                          { provider.name }
-                        </Button>
-                      )
-                    })
-                  }
-                </Grid>
+    useEffect(() => {
+      getProviders().then( prov => {
+        // console.log({prov});
+        setProviders(prov)
+      })
+    }, [])
+    
 
 
-            </Grid>
-        </Box>
+    const onLoginUser = async( { email, password }: FormData ) => {
 
-      </form>
+        setShowError(false);
 
-    </AuthLayout>
+        // const isValidLogin = await loginUser( email, password );
+        // if ( !isValidLogin ) {
+        //     setShowError(true);
+        //     setTimeout(() => setShowError(false), 3000);
+        //     return;
+        // }
+        // // Todo: navegar a la pantalla que el usuario estaba
+        // const destination = router.query.p?.toString() || '/';
+        // router.replace(destination);
+        await signIn('credentials',{ email, password });
+
+    }
+
+
+    return (
+        <AuthLayout title={'Ingresar'}>
+            <form onSubmit={ handleSubmit(onLoginUser) } noValidate>
+                <Box sx={{ width: 350, padding:'10px 20px' }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Typography variant='h1' component="h1">Iniciar Sesión</Typography>
+                            <Chip 
+                                label="No reconocemos ese usuario / contraseña"
+                                color="error"
+                                icon={ <ErrorOutline /> }
+                                className="fadeIn"
+                                sx={{ display: showError ? 'flex': 'none' }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                type="email"
+                                label="Correo"
+                                variant="filled"
+                                fullWidth 
+                                { ...register('email', {
+                                    required: 'Este campo es requerido',
+                                    validate: validations.isEmail
+                                    
+                                })}
+                                error={ !!errors.email }
+                                helperText={ errors.email?.message }
+                            />
+
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Contraseña"
+                                type='password'
+                                variant="filled"
+                                fullWidth 
+                                { ...register('password', {
+                                    required: 'Este campo es requerido',
+                                    minLength: { value: 6, message: 'Mínimo 6 caracteres' }
+                                })}
+                                error={ !!errors.password }
+                                helperText={ errors.password?.message }
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Button
+                                type="submit"
+                                color="secondary"
+                                className='circular-btn'
+                                size='large'
+                                fullWidth>
+                                Ingresar
+                            </Button>
+                        </Grid>
+
+                        <Grid item xs={12} display='flex' justifyContent='end'>
+                            <NextLink 
+                                href={ router.query.p ? `/auth/register?p=${ router.query.p }`: '/auth/register' } 
+                                passHref>
+                                <Link underline='always'>
+                                    ¿No tienes cuenta?
+                                </Link>
+                            </NextLink>
+                        </Grid>
+
+                            
+                        <Grid item xs={12} display='flex' flexDirection='column' justifyContent='end'>
+                            <Divider sx={{ width: '100%', mb: 2 }} />
+                            {
+                                Object.values( providers ).map(( provider: any ) => {
+                                    
+                                    if ( provider.id === 'credentials' ) return (<div key="credentials"></div>);
+
+                                    return (
+                                        <Button
+                                            key={ provider.id }
+                                            variant="outlined"
+                                            fullWidth
+                                            color="primary"
+                                            sx={{ mb: 1 }}
+                                            onClick={ () => signIn( provider.id ) }
+                                        >
+                                            { provider.name }
+                                        </Button>
+                                    )
+
+                                })
+                            }
+
+                        </Grid>
+
+                    </Grid>
+                </Box>
+            </form>
+        </AuthLayout>
   )
 }
 
+
+
 // You should use getServerSideProps when:
 // - Only if you need to pre-render a page whose data must be fetched at request time
+
+
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-  
-  const session = await getSession({ req });
-  const { p = '/' } = query;
+    
+    const session = await getSession({ req });
+    // console.log({session});
 
-  if (session) {
+    const { p = '/' } = query;
+
+    if ( session ) {
+        return {
+            redirect: {
+                destination: p.toString(),
+                permanent: false
+            }
+        }
+    }
+
+
     return {
-      redirect:{
-        destination: p.toString(),
-        permanent: false
-      }
+        props: { }
     }
-  }
-
-  return {
-    props: {
-      
-    }
-  }
 }
+
+
 
 export default LoginPage
