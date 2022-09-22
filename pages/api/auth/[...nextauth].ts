@@ -13,7 +13,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password', placeholder: 'Password' },
       },
       async authorize(credentials) {
-        console.log(credentials)
         // Auth failed
         return await dbUsers.checkUserEmailPassword(credentials!.email, credentials!.password)
       }
@@ -33,6 +32,7 @@ export const authOptions: NextAuthOptions = {
         token.accesToken = account.access_token;
         switch (account.type) {
           case 'oauth':
+            token.user = await dbUsers.oAuthToDbUser(user?.email || '', user?.name || '');
             break;
           case 'credentials':
             token.user = user;
