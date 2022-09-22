@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials"
 import GithubProvider from "next-auth/providers/github"
 import { dbUsers } from "../../../database"
 
+
 export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -24,6 +25,17 @@ export const authOptions: NextAuthOptions = {
     }),
     // ...add more providers here
   ],
+  // Custom pages:
+  pages: {
+    signIn: '/auth/login',
+    signOut: '/auth/register',
+  },
+  // Duration
+  session: {
+    maxAge: 2592000, //30d
+    strategy: 'jwt',
+    updateAge: 86400, //day by day refresh
+  },
 
   // Callbacks:
   callbacks: {
