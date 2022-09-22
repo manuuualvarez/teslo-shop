@@ -22,12 +22,9 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
 
-  const router = useRouter();
+  // const router = useRouter();
   const { data, status } = useSession();
 
-  // useEffect(() => {
-  //   checkToken();
-  // }, []);
 
   useEffect(() => {
     if(status === 'authenticated') {

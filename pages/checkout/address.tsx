@@ -6,7 +6,7 @@ import { countries } from '../../utils/countries';
 import { useForm } from 'react-hook-form';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { CartContext } from '../../context/cart/CartContext';
 
 type FormData = {
@@ -38,9 +38,23 @@ const AddressPage = () => {
         }
     }
 
-    const { register, handleSubmit, formState: {errors} } = useForm<FormData>({
-        defaultValues: getDataFromCookies()
+    const { register, handleSubmit, formState: {errors}, reset } = useForm<FormData>({
+        defaultValues: {
+            firstName: '',
+            lastName: '',
+            address: '',
+            address2: '',
+            zip: '',
+            city: '',
+            country: countries[1].code,
+            phone: '',
+        }
     });
+
+    useEffect(() => {
+        reset(getDataFromCookies());
+    }, [reset])
+    
 
     const onSubmitAddress = (data: FormData) => {
         updateAddress(data);
@@ -140,27 +154,29 @@ const AddressPage = () => {
                 </Grid>
                 {/* Country */}
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
+                    {/* <FormControl fullWidth> */}
                         <TextField
-                            select
+                            // select
                             variant="filled"
                             label="Country"
-                            defaultValue={ Cookies.get('country') || countries[1].code}
+                            fullWidth
+                            // defaultValue={ Cookies.get('country') || countries[1].code}
                             {
                                 ...register('country', {
                                     required: 'This field is mandatory',
                                 })
                             }
                             error={!!errors.country}
+                            helperText={ errors.country?.message}
                         >
-                            {
+                            {/* {
                                 countries.map( country => (
                                     <MenuItem value={country.code} key={country.code}>{ country.name}</MenuItem>
                                 ))
-                            }
+                            } */}
 
                         </TextField>
-                    </FormControl>
+                    {/* </FormControl> */}
                 </Grid>
                 {/* Phone */}
                 <Grid item xs={12} sm={6}>
