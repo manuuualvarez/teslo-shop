@@ -1,24 +1,30 @@
-
-# Next.js Teslo Shop App
-
-For run this app you need a data base
+# Next.js Telo Shop
+Para correr localmente, se necesita la base de datos.
 ```
-    docker-compose up -d
+docker-compose up -d
 ```
 
-* The -d, means __detached__
+* El -d, significa __detached__
 
-* MongoDB URL Local:
 
-```
-    mongodb://localhost:27017/teslodb
-```
 
 ## Configurar las variables de entorno
 Renombrar el archivo __.env.template__ a __.env__
+* MongoDB URL Local:
+```
+MONGO_URL=mongodb://localhost:27017/teslodb
+```
 
-## Fill the database with test data:
- Call to:
- ```
-    http://localhost:3000/api/seed
- ```
+* Reconstruir los módulos de node y levantar Next
+```
+yarn install
+yarn dev
+```
+
+
+## Llenar la base de datos con información de pruebas
+
+Llamara:
+```
+http://localhost:3000/api/seed
+```

@@ -1,18 +1,21 @@
-import { User } from "../models";
-import { db } from "./"
 import bcrypt from 'bcryptjs';
 
+import { User } from '../models';
+import { db } from './';
 
-export const checkUserEmailPassword = async (email: string, password: string) => {
+
+
+export const checkUserEmailPassword = async( email: string, password: string ) => {
+
     await db.connect();
-    const user = await User.findOne({ email }).lean();
+    const user = await User.findOne({ email });
     await db.disconnect();
 
-    if (!user) {
+    if ( !user ) {
         return null;
     }
 
-    if(!bcrypt.compareSync(password, user.password!)){
+    if ( !bcrypt.compareSync( password, user.password! ) ) {
         return null;
     }
 
@@ -21,28 +24,30 @@ export const checkUserEmailPassword = async (email: string, password: string) =>
     return {
         _id,
         email: email.toLocaleLowerCase(),
+        role,
         name,
-        role
     }
 }
 
-export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
-    await db.connect()
-    const user = await User.findOne({email: oAuthEmail}).lean();
 
-    if(user) {
-        await db.disconnect()
+// Esta función crea o verifica el usuario de OAuth
+export const oAUthToDbUser = async( oAuthEmail: string, oAuthName: string ) => {
+
+    await db.connect();
+    const user = await User.findOne({ email: oAuthEmail });
+
+    if ( user ) {
+        await db.disconnect();
         const { _id, name, email, role } = user;
-        return { _id, name, email, role }
+        return { _id, name, email, role };
     }
 
-    const newUser = new User({email: oAuthEmail, name: oAuthName, password: '@', role: 'client'})
+    const newUser = new User({ email: oAuthEmail, name: oAuthName, password: '@', role: 'client'  });
     await newUser.save();
-    await db.disconnect()
+    await db.disconnect();
 
     const { _id, name, email, role } = newUser;
     return { _id, name, email, role };
 
 }
-
 

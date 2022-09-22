@@ -1,43 +1,54 @@
-import Head from 'next/head'
-import React, { FC } from 'react'
+import { FC } from 'react';
+import Head from 'next/head';
+
 import { Navbar, SideMenu } from '../ui';
+
 
 interface Props {
     title: string;
     pageDescription: string;
-    imgFullURL?: string;
-    children?: React.ReactNode | undefined
+    imageFullUrl?: string;
 }
 
-export const ShopLayout: FC<Props> = ({ children, pageDescription, title, imgFullURL }) => {
+export const ShopLayout:FC<Props> = ({ children, title, pageDescription, imageFullUrl }) => {
   return (
     <>
         <Head>
             <title>{ title }</title>
-            <meta name='description' content={ pageDescription}/>
-            <meta name='og:title' content={ title }/>
-            <meta name='og:description' content={ pageDescription }/>
+
+            <meta name="description" content={ pageDescription } />
+            
+            
+            <meta name="og:title" content={ title } />
+            <meta name="og:description" content={ pageDescription } />
 
             {
-                imgFullURL && (
-                    <meta name='og:image' content={ imgFullURL }/>
+                imageFullUrl && (
+                    <meta name="og:image" content={ imageFullUrl } />
                 )
             }
-        </Head>
+
+        </Head> 
 
         <nav>
-            <Navbar></Navbar>
+            <Navbar />
         </nav>
 
-        <SideMenu></SideMenu>
+        <SideMenu />
 
-        <main style={{ margin: '80px auto', maxWidth: '1440px', padding: '0px 30px'}}>
+        <main style={{
+            margin: '80px auto',
+            maxWidth: '1440px',
+            padding: '0px 30px'
+        }}>
             { children }
         </main>
 
+        {/* Footer */}
         <footer>
-            {/* Custom footer */}
+            {/* TODO: mi custom footer */}
         </footer>
+
     </>
   )
 }
