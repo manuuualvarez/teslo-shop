@@ -11,23 +11,18 @@ import { FullScreenLoading } from '../components/ui';
 
 const HomePage: NextPage = () => {
 
-
   const { products, isLoading } = useProducts('/products');
 
-
   return (
-    <ShopLayout title={'Teslo-Shop - Home'} pageDescription={'Encuentra los mejores productos de Teslo aquí'}>
-        <Typography variant='h1' component='h1'>Tienda</Typography>
-        <Typography variant='h2' sx={{ mb: 1 }}>Todos los productos</Typography>
+    <ShopLayout title={'Teslo-Shop - Home'} pageDescription={'Find the best products here'}>
+        <Typography variant='h1' component='h1'>Shopping</Typography>
+        <Typography variant='h2' sx={{ mb: 1 }}>All Products</Typography>
 
         {
           isLoading
             ? <FullScreenLoading />
             : <ProductList products={ products } />
         }
-
-        
-    
 
     </ShopLayout>
   )
