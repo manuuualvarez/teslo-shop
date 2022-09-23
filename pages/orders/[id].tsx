@@ -1,6 +1,5 @@
-import NextLink from 'next/link';
 
-import { Link, Box, Card, CardContent, Divider, Grid, Typography, Chip } from '@mui/material';
+import {  Box, Card, CardContent, Divider, Grid, Typography, Chip } from '@mui/material';
 import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material';
 
 import { ShopLayout } from '../../components/layouts/ShopLayout';
@@ -9,6 +8,8 @@ import { GetServerSideProps, NextPage } from 'next';
 import { getSession } from 'next-auth/react';
 import { dbOrders } from '../../database';
 import { IOrder } from '../../interfaces';
+
+import {  PayPalButtons } from "@paypal/react-paypal-js";
 
 
 interface Props {
@@ -90,18 +91,32 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                                     />
 
                                 ): (
-                                    <Chip 
-                                        sx={{ my: 2 }}
-                                        label="Waiting for payment"
-                                        variant='outlined'
-                                        color="error"
-                                        icon={ <CreditScoreOutlined /> }
-                                    />
 
+                                    <PayPalButtons
+                                        createOrder={(data, actions) => {
+                                            return actions.order.create({
+                                                purchase_units: [
+                                                    {
+                                                        amount: {
+                                                            value: "31.99",
+                                                        },
+                                                    },
+                                                ],
+                                            });
+                                        }}
+                                        onApprove={(data, actions) => {
+                                            return actions.order!.capture().then((details) => {
+                                                console.log({details})
+                                                const name = details.payer.name!.given_name;
+                                                alert(`Transaction completed by ${name}`);
+                                            });
+                                        }}
+                                    
+                                    />
                                 )
 
                             }
-                            <h1>Pay</h1>
+                            
 
                         </Box>
 
