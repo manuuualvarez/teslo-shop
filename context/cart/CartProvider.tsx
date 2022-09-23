@@ -1,9 +1,8 @@
 import { FC, useEffect, useReducer } from 'react';
 import Cookie from 'js-cookie';
-
-
-import { ICartProduct } from '../../interfaces';
+import { ICartProduct, IOrder, ShippingAddress } from '../../interfaces';
 import { CartContext, cartReducer } from './';
+import { tesloApi } from '../../api';
 
 export interface CartState {
     isLoaded: boolean;
@@ -14,17 +13,6 @@ export interface CartState {
     total: number;
 
     shippingAddress?: ShippingAddress;
-}
-
-export interface ShippingAddress {
-    firstName: string;
-    lastName : string;
-    address  : string;
-    address2?: string;
-    zip      : string;
-    city     : string;
-    country  : string;
-    phone    : string;
 }
 
 
@@ -43,7 +31,6 @@ export const CartProvider:FC = ({ children }) => {
 
     const [state, dispatch] = useReducer( cartReducer , CART_INITIAL_STATE );
 
-    // Efecto
     useEffect(() => {
         try {
             const cookieProducts = Cookie.get('cart') ? JSON.parse( Cookie.get('cart')! ): []
@@ -52,7 +39,6 @@ export const CartProvider:FC = ({ children }) => {
             dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: [] });
         }
     }, []);
-
 
     useEffect(() => {
 
@@ -71,10 +57,7 @@ export const CartProvider:FC = ({ children }) => {
             dispatch({ type:'[Cart] - LoadAddress from Cookies', payload: shippingAddress })
         }
     }, [])
-    
-
-
-    
+        
     useEffect(() => {
       Cookie.set('cart', JSON.stringify( state.cart ));
     }, [state.cart]);
@@ -148,16 +131,45 @@ export const CartProvider:FC = ({ children }) => {
         dispatch({ type: '[Cart] - Update Address', payload: address });
     }
 
+    const createOrder = async () => {
+
+        if(!state.shippingAddress) {
+            throw new Error("Shipping Addres does not exist");
+        }
+
+        const body: IOrder = {
+            orderItems: state.cart.map (p => ({
+                ...p,
+                size: p.size!
+            })),
+            shippingAddress: state.shippingAddress,
+            numberOfItems: state.numberOfItems,
+            subTotal: state.subTotal,
+            tax: state.tax,
+            total: state.total,
+            isPaid: false
+        }
+
+        try {
+            const { data } = await tesloApi.post('/orders', body);
+
+            console.log({data});
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     return (
         <CartContext.Provider value={{
             ...state,
-
             // Methods
             addProductToCart,
             removeCartProduct,
             updateCartQuantity,
             updateAddress,
+            createOrder,
         }}>
             { children }
         </CartContext.Provider>

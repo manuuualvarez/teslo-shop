@@ -14,16 +14,18 @@ import { countries } from '../../utils';
 const SummaryPage = () => {
 
     const router = useRouter();
-    const { shippingAddress, numberOfItems } = useContext( CartContext );
+    const { shippingAddress, numberOfItems, createOrder } = useContext( CartContext );
     
     useEffect(() => {
         if ( !Cookies.get('firstName') ) {
             router.push('/checkout/address');
         }
     }, [ router ]);
+
+    const onCreateOrder = () => {
+        createOrder();
+    }
     
-
-
     if ( !shippingAddress ) {
         return <></>;
     }
@@ -31,24 +33,24 @@ const SummaryPage = () => {
     const { firstName, lastName, address, address2 = '', city, country, phone, zip } = shippingAddress;
 
   return (
-    <ShopLayout title='Resumen de orden' pageDescription={'Resumen de la orden'}>
-        <Typography variant='h1' component='h1'>Resumen de la orden</Typography>
+    <ShopLayout title='Order summary' pageDescription={'Order summary'}>
+        <Typography variant='h1' component='h1'>Order summary</Typography>
 
         <Grid container>
-            <Grid item xs={ 12 } sm={ 7 }>
+            <Grid item xs={ 12 } sm={ 7 }>|
                 <CartList />
             </Grid>
             <Grid item xs={ 12 } sm={ 5 }>
                 <Card className='summary-card'>
                     <CardContent>
-                        <Typography variant='h2'>Resumen ({numberOfItems} { numberOfItems === 1 ? 'producto':'productos' })</Typography>
+                        <Typography variant='h2'>Resume ({numberOfItems} { numberOfItems === 1 ? 'item':'items' })</Typography>
                         <Divider sx={{ my:1 }} />
 
                         <Box display='flex' justifyContent='space-between'>
-                            <Typography variant='subtitle1'>Dirección de entrega</Typography>
+                            <Typography variant='subtitle1'>Dropp Off </Typography>
                             <NextLink href='/checkout/address' passHref>
                                 <Link underline='always'>
-                                    Editar
+                                    Edit address
                                 </Link>
                             </NextLink>
                         </Box>
@@ -66,7 +68,7 @@ const SummaryPage = () => {
                         <Box display='flex' justifyContent='end'>
                             <NextLink href='/cart' passHref>
                                 <Link underline='always'>
-                                    Editar
+                                    Edit
                                 </Link>
                             </NextLink>
                         </Box>
@@ -74,8 +76,8 @@ const SummaryPage = () => {
                         <OrderSummary />
 
                         <Box sx={{ mt: 3 }}>
-                            <Button color="secondary" className='circular-btn' fullWidth>
-                                Confirmar Orden
+                            <Button color="secondary" className='circular-btn' fullWidth onClick={ onCreateOrder }>
+                                Confirm Order
                             </Button>
                         </Box>
 
