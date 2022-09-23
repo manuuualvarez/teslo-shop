@@ -21,8 +21,6 @@ export const Navbar = () => {
         push(`/search/${ searchTerm }`);
     }
 
-    
-
     return (
         <AppBar>
             <Toolbar>
@@ -39,27 +37,23 @@ export const Navbar = () => {
                     className="fadeIn">
                     <NextLink href='/category/men' passHref>
                         <Link>
-                            <Button color={ asPath === '/category/men' ? 'primary':'info'}>Hombres</Button>
+                            <Button color={ asPath === '/category/men' ? 'primary':'info'}>Men</Button>
                         </Link>
                     </NextLink>
                     <NextLink href='/category/women' passHref>
                         <Link>
-                            <Button color={ asPath === '/category/women' ? 'primary':'info'}>Mujeres</Button>
+                            <Button color={ asPath === '/category/women' ? 'primary':'info'}>Women</Button>
                         </Link>
                     </NextLink>
                     <NextLink href='/category/kid' passHref>
                         <Link>
-                            <Button color={ asPath === '/category/kid' ? 'primary':'info'}>Niños</Button>
+                            <Button color={ asPath === '/category/kid' ? 'primary':'info'}>Kids</Button>
                         </Link>
                     </NextLink>
                 </Box>
 
-
                 <Box flex={ 1 } />
-                
-                
-
-                {/* Pantallas pantallas grandes */}
+                {/* Big Screen */}
                 {
                     isSearchVisible 
                         ? (
@@ -71,7 +65,7 @@ export const Navbar = () => {
                                 onChange={ (e) => setSearchTerm( e.target.value ) }
                                 onKeyPress={ (e) => e.key === 'Enter' ? onSearchTerm() : null }
                                 type='text'
-                                placeholder="Buscar..."
+                                placeholder="Search..."
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
@@ -95,8 +89,7 @@ export const Navbar = () => {
                     )
                 }
 
-
-                {/* Pantallas pequeñas */}
+                {/* Small Screens */}
                 <IconButton
                     sx={{ display: { xs: 'flex', sm: 'none' } }}
                     onClick={ toggleSideMenu }
@@ -116,7 +109,7 @@ export const Navbar = () => {
 
 
                 <Button onClick={ toggleSideMenu }>
-                    Menú
+                    Menu
                 </Button>
 
             </Toolbar>
