@@ -28,6 +28,17 @@ const columns: GridColDef[] = [
         }
     },
     {
+        field: 'address',
+        headerName: 'Shipping to',
+        width: 200,
+        sortable: false,
+        renderCell: (params: GridValueGetterParams) => {
+            return (
+                <Typography>{ params.row.address }</Typography>
+            )
+        }
+    },
+    {
         field: 'orderId',
         headerName: 'Order Link',
         width: 200,
@@ -42,17 +53,6 @@ const columns: GridColDef[] = [
             )
         }
     },
-    {
-        field: 'address',
-        headerName: 'Shipping to',
-        width: 200,
-        sortable: false,
-        renderCell: (params: GridValueGetterParams) => {
-            return (
-                <Typography>{ params.row.address }</Typography>
-            )
-        }
-    }
 ];
 
 interface Props {
@@ -76,7 +76,7 @@ const HistoryPage: NextPage<Props> = ( { orders } ) => {
         <Typography variant='h1' component='h1'>Orders History</Typography>
 
 
-        <Grid container>
+        <Grid container className='fadeIn' sx={{mt: 2}}>
             <Grid item xs={12} sx={{ height:650, width: '100%' }}>
                 <DataGrid 
                     rows={ rows }
