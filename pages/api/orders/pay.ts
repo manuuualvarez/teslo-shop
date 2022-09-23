@@ -1,5 +1,9 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { db } from '../../../database';
+import { IPaypal } from '../../../interfaces';
+import { Order } from '../../../models';
+
 
 type Data = {
     message: string
@@ -49,16 +53,39 @@ const peyOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const paypalBearerToken = await getPaypalBearerToken();
 
     if(!paypalBearerToken) {
-        return res.status(400).json({ message: 'We can not confirm the paypal token' })
+        return res.status(400).json({ message: 'We can not cconnect with paypal' })
     }
 
     const { transactionId = '', orderId = '' } = req.body;
 
-    const { data } = await axios.get(`${ process.env.PAYPAL_ORDERS_URL }/${transactionId}`, {
+    const { data } = await axios.get<IPaypal.PaypalOrderStatusResponse>(`${ process.env.PAYPAL_ORDERS_URL }/${transactionId}`, {
         headers: {
             'Authorization': `Bearer ${ paypalBearerToken }` 
         }
     });
+    // Check if the payment is completed
+    if (data.status !== 'COMPLETED') {
+        return res.status(401).json({ message: 'We can not recognize the order' });
+    }
 
-    return res.status(200).json({ message: 'Paypal token: ' + paypalBearerToken })
+    await db.connect();
+    // Check if the order exist in db
+    const dbOrder = await Order.findById(orderId);
+    if (!dbOrder) {
+        await db.disconnect();
+        return res.status(400).json({ message: 'Order does not match with our database' });
+    }
+    // Check the total amount between db and paypal
+    if(dbOrder.total !== Number(data.purchase_units[0].amount.value)) {
+        await db.disconnect();
+        return res.status(400).json({ message: 'The price does not match with the payment' });
+    }
+    // Save transaction in the order
+    dbOrder.tansactionId = transactionId;
+    dbOrder.isPaid = true
+    await dbOrder.save()
+
+    await db.disconnect();
+
+    return res.status(200).json({ message: 'Payment Successfully'})
 }
