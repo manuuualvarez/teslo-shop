@@ -77,17 +77,32 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                                     tax: order.tax,
                         }}/>
 
-                        <Box sx={{ mt: 3 }}>
-                            {/* TODO */}
+                        <Box sx={{ mt: 3 }} display="flex" flexDirection={'column'}>
+                            {
+                                order.isPaid
+                                ? (
+                                    <Chip 
+                                        sx={{ my: 2 }}
+                                        label="It was paid"
+                                        variant='outlined'
+                                        color="success"
+                                        icon={ <CreditScoreOutlined /> }
+                                    />
+
+                                ): (
+                                    <Chip 
+                                        sx={{ my: 2 }}
+                                        label="Waiting for payment"
+                                        variant='outlined'
+                                        color="error"
+                                        icon={ <CreditScoreOutlined /> }
+                                    />
+
+                                )
+
+                            }
                             <h1>Pay</h1>
 
-                            <Chip 
-                                sx={{ my: 2 }}
-                                label="It was paid"
-                                variant='outlined'
-                                color="success"
-                                icon={ <CreditScoreOutlined /> }
-                            />
                         </Box>
 
                     </CardContent>
