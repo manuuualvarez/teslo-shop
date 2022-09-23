@@ -32,6 +32,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     // Validate the price with backend
     try {
         const subTotal = orderItems.reduce( ( prev, current ) => {
+            // Do not use prod_id because it is an Object Id not an String
             const currentPrice = dbProducts.find( prod => prod.id === current._id )?.price;
 
             if(!currentPrice) {
@@ -49,12 +50,12 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         // Cart was not manipulated:
         const userId = session.user._id;
         const newOrder = new Order({ ...req.body, isPaid: false, user: userId });
-        await newOrder.save()
-        await db.disconnect()
+        await newOrder.save();
+        await db.disconnect();
         return res.status(201).json( newOrder );
 
     } catch (error: any) {
-        await db.disconnect()
+        await db.disconnect();
         console.log(error);
         return res.status(400).json({ message: error.message || 'Check logs on the server side'});
     }
