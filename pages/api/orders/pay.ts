@@ -52,5 +52,13 @@ const peyOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         return res.status(400).json({ message: 'We can not confirm the paypal token' })
     }
 
+    const { transactionId = '', orderId = '' } = req.body;
+
+    const { data } = await axios.get(`${ process.env.PAYPAL_ORDERS_URL }/${transactionId}`, {
+        headers: {
+            'Authorization': `Bearer ${ paypalBearerToken }` 
+        }
+    });
+
     return res.status(200).json({ message: 'Paypal token: ' + paypalBearerToken })
 }
