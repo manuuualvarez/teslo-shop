@@ -50,6 +50,8 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         // Cart was not manipulated:
         const userId = session.user._id;
         const newOrder = new Order({ ...req.body, isPaid: false, user: userId });
+        // Round total for payment platform
+        newOrder.total = Math.round(newOrder.total * 100) / 100
         await newOrder.save();
         await db.disconnect();
         return res.status(201).json( newOrder );
@@ -59,6 +61,4 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         console.log(error);
         return res.status(400).json({ message: error.message || 'Check logs on the server side'});
     }
-
-
 }

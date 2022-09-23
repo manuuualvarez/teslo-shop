@@ -30,7 +30,6 @@ export const CartList: FC<Props> = ({ editable = false, products }) => {
                 productToShow.map( product => (
                     <Grid container spacing={2} key={ product.slug + product.size } sx={{ mb:1 }}>
                         <Grid item xs={3}>
-                            {/* TODO: llevar a la página del producto */}
                             <NextLink href={`/product/${ product.slug }`} passHref>
                                 <Link>
                                     <CardActionArea>
@@ -58,7 +57,7 @@ export const CartList: FC<Props> = ({ editable = false, products }) => {
                                         />
                                     )
                                     : (
-                                        <Typography variant='h5'>{ product.quantity } { product.quantity > 1 ? 'productos':'producto' }</Typography>
+                                        <Typography variant='h5'>{ product.quantity } { product.quantity > 1 ? 'items':'item' }</Typography>
                                     )
                                 }
                                 
@@ -74,7 +73,7 @@ export const CartList: FC<Props> = ({ editable = false, products }) => {
                                         color='secondary' 
                                         onClick={ () => removeCartProduct( product as ICartProduct ) }
                                     >
-                                        Remover
+                                        Remove
                                     </Button>
                                 )
                             }
