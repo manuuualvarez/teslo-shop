@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { SideMenu } from '../ui';
 import { AdminNavbar } from '../admin';
-import { Box, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 
 
 interface Props {
@@ -30,10 +30,12 @@ export const AddminLayout:FC<Props> = ({ children, title, subtitle, icon }) => {
                     { icon }
                     { title }
                 </Typography>
-                <Typography variant='h2' sx={{mb: 1}}>{ subtitle }</Typography>
+                <Typography variant='h2' sx={{mb: 2, mt: 2}}>{ subtitle }</Typography>
 
                 <Box className='fadeIn'>
+                    
                     { children }
+        
                 </Box>
 
             </Box>

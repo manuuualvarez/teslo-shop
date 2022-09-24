@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 
 import { Box, Divider, Drawer, IconButton, Input, InputAdornment, List, ListItem, ListItemIcon, ListItemText, ListSubheader } from "@mui/material"
-import { AccountCircleOutlined, AdminPanelSettings, CategoryOutlined, ConfirmationNumberOutlined, EscalatorWarningOutlined, FemaleOutlined, LoginOutlined, MaleOutlined, SearchOutlined, VpnKeyOutlined } from "@mui/icons-material"
+import { AccountCircleOutlined, AdminPanelSettings, CategoryOutlined, ConfirmationNumberOutlined, DashboardOutlined, EscalatorWarningOutlined, FemaleOutlined, LoginOutlined, MaleOutlined, SearchOutlined, VpnKeyOutlined } from "@mui/icons-material"
 
 import { UiContext, AuthContext } from '../../context';
 import { useRouter } from 'next/router';
@@ -141,20 +141,31 @@ export const SideMenu = () => {
                         <>
                             <Divider />
                             <ListSubheader>Admin Panel</ListSubheader>
-
+                            {/* Dashboard Page */}
+                            <ListItem 
+                                button 
+                                onClick={ () => navigateTo('/admin')}
+                            >
+                                <ListItemIcon>
+                                    <DashboardOutlined/>
+                                </ListItemIcon>
+                                <ListItemText primary={'Dashboard'} />
+                            </ListItem>
+                            {/* Products Page */}
                             <ListItem button>
                                 <ListItemIcon>
                                     <CategoryOutlined/>
                                 </ListItemIcon>
                                 <ListItemText primary={'Products'} />
                             </ListItem>
+                            {/* Orders Page */}
                             <ListItem button>
                                 <ListItemIcon>
                                     <ConfirmationNumberOutlined/>
                                 </ListItemIcon>
                                 <ListItemText primary={'Orders'} />
                             </ListItem>
-
+                            {/* Users Page */}
                             <ListItem button>
                                 <ListItemIcon>
                                     <AdminPanelSettings/>
