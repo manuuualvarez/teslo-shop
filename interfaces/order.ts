@@ -13,7 +13,8 @@ export interface IOrder {
     isPaid: boolean;
     paidAt?: string;
     tansactionId?: string;
-    createdAt: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface IOrderItem {
@@ -33,7 +34,7 @@ export interface ShippingAddress {
     firstName: string;
     lastName: string;
     address: string;
-    address2: string;
+    address2?: string;
     zip: string;
     city: string;
     country: string;

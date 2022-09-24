@@ -148,7 +148,7 @@ export const CartProvider:FC = ({ children }) => {
             subTotal: state.subTotal,
             tax: state.tax,
             total: state.total,
-            isPaid: false
+            isPaid: false,
         }
 
         try {

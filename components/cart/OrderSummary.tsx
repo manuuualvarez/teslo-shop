@@ -17,9 +17,9 @@ interface Props {
 
 export const OrderSummary: FC<Props> = ({ orderValues }) => {
 
-    const { numberOfItems, subTotal, total, tax } = orderValues ? orderValues : useContext( CartContext );
-
-    const summaryValues = orderValues ? orderValues : { numberOfItems, subTotal, total, tax }
+    const { numberOfItems, subTotal, total, tax } = useContext( CartContext );
+    
+    const summaryValues = orderValues ? orderValues : { numberOfItems, subTotal, total, tax };
     
   return (
     <Grid container>
