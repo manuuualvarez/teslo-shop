@@ -1,5 +1,5 @@
 import { PeopleOutline } from '@mui/icons-material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { AddminLayout } from '../../components/layouts'
 import NextLink from 'next/link';
 // Material Table
@@ -14,17 +14,32 @@ import { tesloApi } from '../../api';
 const UsersPage = () => {
 
     const { data, error } = useSWR<IUser[]>('/api/admin/users');
+    // Redraw the component then the selector role change and update:
+    const [users, setUsers] = useState<IUser[]>([]);
+    // Upload when the update is successfully
+    useEffect(() => {
+        if(data) {
+            setUsers(data);
+        }
+    }, [data]);
+    
 
     if (!data && !error) {
         return <></>
     }
 
     const onRoleUpdate = async (userId: string, newRole: string) => {
+        const previousUsers = users.map(user => ({...user}) );
+        const updateUser = users.map( user => ({
+            ...user,
+            role: userId === user._id ? newRole : user.role
+        }));
+        setUsers(updateUser);
         try {
             await tesloApi.put('/admin/users', {userId, role: newRole });
         } catch (error) {
+            setUsers(previousUsers);
             alert("We can not update the role, try again in 30 minutes");
-            console.log(error);
         }
     }
 
@@ -54,17 +69,14 @@ const UsersPage = () => {
             }
         },
     ];
-    // Rows (If define into the function componen could be change)
-    const rows = data!.map( user => ({
+    // Rows allways has been declare on the component
+    const rows = users.map( user => ({
         id: user._id,
         email: user.email,
         name: user.name,
         role: user.role
     }))
     
-    
-    
-
   return (
     <AddminLayout 
         title={'Users'} 
