@@ -28,7 +28,7 @@ export const AddminLayout:FC<Props> = ({ children, title, subtitle, icon }) => {
             <Box display={'flex'} flexDirection='column'>
                 <Typography variant='h1' component={'h1'}>
                     { icon }
-                    { title }
+                    {'   '}{ title }
                 </Typography>
                 <Typography variant='h2' sx={{mb: 2, mt: 2}}>{ subtitle }</Typography>
 
