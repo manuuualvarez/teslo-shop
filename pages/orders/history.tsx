@@ -9,7 +9,7 @@ import { getSession } from 'next-auth/react';
 import { dbOrders } from '../../database';
 import { IOrder } from '../../interfaces';
 
-
+// Columns (If define out of the function componen could NOT be change)
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
     { field: 'fullname', headerName: 'Full Name', width: 300 },
