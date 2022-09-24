@@ -1,11 +1,12 @@
 import { CategoryOutlined, ConfirmationNumberOutlined, Rowing } from '@mui/icons-material'
-import { CardMedia, Chip, Grid } from '@mui/material'
+import { CardMedia, Chip, Grid, Link } from '@mui/material'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import React from 'react'
 import useSWR from 'swr';
-import { AddminLayout } from '../../components/layouts'
+import { AddminLayout } from '../../../components/layouts'
 
-import { IProduct } from '../../interfaces';
+import { IProduct } from '../../../interfaces';
+import NextLink from 'next/link';
 
 
 
@@ -26,7 +27,20 @@ const columns: GridColDef[] = [
         )
     }
 },
-  { field: 'title', headerName: 'Title', width: 250 },
+  { 
+    field: 'title', 
+    headerName: 'Title', 
+    width: 250, 
+    renderCell: ({row}: GridValueGetterParams) => {
+      return (
+        <NextLink href={`/admin/products/${row.slug}`} passHref>
+          <Link underline='always'>
+          { row.title }
+          </Link>
+        </NextLink>
+      )
+    }
+  },
   { field: 'gender', headerName: 'Genre'},
   { field: 'type', headerName: 'Type'},
   { field: 'isStock', headerName: 'Stock'},
