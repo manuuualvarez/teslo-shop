@@ -3,9 +3,9 @@ import { Chip, Grid } from '@mui/material'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import React from 'react'
 import useSWR from 'swr';
-import { AddminLayout } from '../../components/layouts'
-import { IUser } from '../../interfaces';
-import { IOrder } from '../../interfaces/order';
+import { AddminLayout } from '../../../components/layouts'
+import { IUser } from '../../../interfaces';
+import { IOrder } from '../../../interfaces/order';
 
 
 
@@ -14,7 +14,7 @@ const columns: GridColDef[] = [
   { field: 'createdAt', headerName: 'Created at', width: 250, align:'center' },
   { field: 'email', headerName: 'Email', width: 250 },
   { field: 'name', headerName: 'Full Name', width: 200 },
-  { field: 'total', headerName: 'Total Ammount', width: 200 },
+  { field: 'total', headerName: 'Total Ammount', width: 200, align: 'center' },
   { 
     field: 'isPaid', 
     headerName: 'Payment Status', 
@@ -52,7 +52,7 @@ const OrdersPage = () => {
     createdAt: order.createdAt,
     email: (order.user as IUser).email,
     name: (order.user as IUser).name,
-    total: order.total,
+    total: `$${order.total}`,
     isPaid: order.isPaid,
     quantity: order.numberOfItems,
   }))

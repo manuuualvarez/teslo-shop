@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 
-import { Box, Divider, Drawer, IconButton, Input, InputAdornment, List, ListItem, ListItemIcon, ListItemText, ListSubheader } from "@mui/material"
+import { Box, Divider, Drawer, IconButton, Input, InputAdornment, List, ListItem, ListItemIcon, ListItemText, ListSubheader, Typography } from "@mui/material"
 import { AccountCircleOutlined, AdminPanelSettings, CategoryOutlined, ConfirmationNumberOutlined, DashboardOutlined, EscalatorWarningOutlined, FemaleOutlined, LoginOutlined, MaleOutlined, SearchOutlined, VpnKeyOutlined } from "@mui/icons-material"
 
 import { UiContext, AuthContext } from '../../context';
@@ -54,6 +54,13 @@ export const SideMenu = () => {
                             </InputAdornment>
                         }
                     />
+                </ListItem>
+
+                <ListItem>
+                    <Typography>{ user?.name }</Typography>
+                </ListItem>
+                <ListItem>
+                    <Typography>{ user?.email }</Typography>
                 </ListItem>
 
                 {
