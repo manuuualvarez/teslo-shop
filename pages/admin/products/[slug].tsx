@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
 
 import { IProduct } from '../../../interfaces';
@@ -37,7 +37,8 @@ interface Props {
 
 const ProductAdminPage:FC<Props> = ({ product }) => {
 
-    const router = useRouter()
+    const router = useRouter();
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const { register, handleSubmit, formState: { errors}, getValues, setValue, watch } = useForm<FormData>({
         defaultValues: product
@@ -85,6 +86,25 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
     const onDeleteTag = ( tag: string ) => {
         const updatedTags = getValues('tags').filter(t => t !== tag);
         setValue('tags', updatedTags, { shouldValidate: true })
+
+    }
+
+    const onFilesSelected =  async ({ target }: ChangeEvent<HTMLInputElement>) => {
+        if(!target.files || target.files.length === 0) {
+            return;
+        }
+        try {
+            // Save images in file system (never do it)
+            for (const file of target.files) {
+                const formData = new FormData();
+                formData.append('file', file);
+                const { data } = await tesloApi.post<{message: string}>('/admin/upload', formData);
+                console.log(data);
+            }
+        } catch (error) {
+            console.log(error)   
+        }
+
 
     }
 
@@ -301,15 +321,24 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                         <Divider sx={{ my: 2  }}/>
                         
                         <Box display='flex' flexDirection="column">
-                            <FormLabel sx={{ mb:1}}>Imágenes</FormLabel>
+                            <FormLabel sx={{ mb:1}}>Images</FormLabel>
                             <Button
                                 color="secondary"
                                 fullWidth
                                 startIcon={ <UploadOutlined /> }
                                 sx={{ mb: 3 }}
+                                onClick={ () => fileInputRef.current?.click() }
                             >
-                                Cargar imagen
+                                Upload Images
                             </Button>
+                            <input
+                                ref={ fileInputRef }
+                                type={'file'}
+                                multiple
+                                accept='image/png, image/gif, image/jpeg'
+                                style={{display: 'none'}}
+                                onChange={ onFilesSelected }
+                            />
 
                             <Chip 
                                 label="Es necesario al menos 2 imagenes"
