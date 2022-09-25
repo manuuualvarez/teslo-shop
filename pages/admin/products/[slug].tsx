@@ -8,6 +8,8 @@ import { Box, Button, capitalize, Card, CardActions, CardMedia, Checkbox, Chip, 
 import { AddminLayout } from '../../../components/layouts';
 import { useForm } from 'react-hook-form';
 import tesloApi from '../../../api/tesloApi';
+import { Product } from '../../../models';
+import { useRouter } from 'next/router';
 
 
 const validTypes  = ['shirts','pants','hoodies','hats']
@@ -34,6 +36,8 @@ interface Props {
 }
 
 const ProductAdminPage:FC<Props> = ({ product }) => {
+
+    const router = useRouter()
 
     const { register, handleSubmit, formState: { errors}, getValues, setValue, watch } = useForm<FormData>({
         defaultValues: product
@@ -91,14 +95,11 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
         try {
             const { data } = await tesloApi({
                 url: '/admin/products',
-                method: 'PUT',
+                method: form._id ? 'PUT' : 'POST',
                 data: form
             });
-
-            console.log("Se updeteo ok: ", data);
-
             if(!form._id) {
-
+                router.replace(`/admin/products/${ form.slug }`);
             } else {
                 setIsSaving(false);
             }
@@ -356,9 +357,20 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     
     const { slug = ''} = query;
-    
-    const product = await dbProducts.getProductBySlug(slug.toString());
 
+    let product: IProduct | null
+
+    if (slug === 'new') {
+        // Create a product
+        const tempProduct = JSON.parse( JSON.stringify(new Product() ) );
+        delete tempProduct._id;
+        tempProduct.images = ['img1.jpg', 'img2.jpg'];
+        product = tempProduct
+    } else {
+        // Edit product
+        product = await dbProducts.getProductBySlug(slug.toString());
+    }
+    
     if ( !product ) {
         return {
             redirect: {

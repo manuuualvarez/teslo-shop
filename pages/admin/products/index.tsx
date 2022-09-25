@@ -1,5 +1,5 @@
-import { CategoryOutlined, ConfirmationNumberOutlined, Rowing } from '@mui/icons-material'
-import { CardMedia, Chip, Grid, Link } from '@mui/material'
+import { AddOutlined, CategoryOutlined, ConfirmationNumberOutlined, Rowing } from '@mui/icons-material'
+import { Box, Button, CardMedia, Chip, Grid, Link } from '@mui/material'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import React from 'react'
 import useSWR from 'swr';
@@ -76,16 +76,26 @@ const ProductsPage = () => {
         subtitle={'Products information'}
         icon={  <CategoryOutlined/>}
     >
-          <Grid container className='fadeIn' sx={{mt: 2}}>
-            <Grid item xs={12} sx={{ height:650, width: '100%' }}>
-                <DataGrid 
-                    rows={ rows }
-                    columns={ columns }
-                    pageSize={ 10 }
-                    rowsPerPageOptions={ [10] }
-                />
-            </Grid>
+      <Box display={'flex'} justifyContent='end' sx={{mb: 2}}>
+          <Button
+            startIcon={<AddOutlined/>}
+            color="secondary"
+            href='/admin/products/new'
+          >
+            Create a product
+          </Button>
+      </Box>
+
+      <Grid container className='fadeIn' sx={{mt: 2}}>
+        <Grid item xs={12} sx={{ height:650, width: '100%' }}>
+            <DataGrid 
+                rows={ rows }
+                columns={ columns }
+                pageSize={ 10 }
+                rowsPerPageOptions={ [10] }
+            />
         </Grid>
+      </Grid>
 
     </AddminLayout>
   )
