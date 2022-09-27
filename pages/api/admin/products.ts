@@ -3,6 +3,9 @@ import { db } from '../../../database';
 import { IProduct } from '../../../interfaces';
 import { Product } from '../../../models';
 import { isValidObjectId } from 'mongoose';
+import {v2 as cloudinary} from 'cloudinary'
+
+cloudinary.config(process.env.CLOUDINARY_URL || '');
 
 type Data = 
 | { message: string }
@@ -31,7 +34,14 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         .lean();
     await db.disconnect();
 
-    return res.status(200).json(products)
+    const updaetdProducts = products.map( product => {
+        product.images = product.images.map ( image => {
+            return image.includes('http') ? image : `${ process.env.HOST_NAME }products/${image}`
+        })
+        return product
+    });
+
+    return res.status(200).json(updaetdProducts)
 
 }
 const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
@@ -46,14 +56,21 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
     }
 
     try {
-
         await db.connect();
-
         const product = await Product.findById(_id);
         if(!product) {
             await db.disconnect();
             return res.status(400).json({message: 'We can not find a product with this identifier'});
         }
+
+        product.images.forEach( async(image) => {
+            // If not include
+            if(!images.includes(image)) {
+                // Delete on cloudinary
+                const [fileId, fileExtension] = image.substring( image.lastIndexOf('/') + 1).split('.')
+                await cloudinary.uploader.destroy(fileId);
+            }
+        })
 
         await product.update(req.body);
         await db.disconnect();
